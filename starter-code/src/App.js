@@ -27,20 +27,27 @@ class App extends Component {
 
   addIngredientHandler = e => {
     const myCart = this.state.cart;
-    const myQuantity = e.target.parentNode.parentNode.firstChild.firstChild.value;
-    const myIngredientFetch = e.target.parentNode.parentNode.parentNode.parentNode.parentNode;
-    const myIngredient = [...this.state.foods].filter(elem => {
+    const myQuantity =
+      e.target.parentNode.parentNode.firstChild.firstChild.value;
+    const myIngredientFetch =
+      e.target.parentNode.parentNode.parentNode.parentNode.parentNode;
+    const myIngredient = [...foods].filter(elem => {
       if (elem.name.includes(myIngredientFetch.title)) {
         elem.quantity += +myQuantity;
-        elem.calories *= +myQuantity;
+        elem.calories += elem.calories * +myQuantity;
         return elem;
       }
     });
-  myCart.push(...myIngredient)
+    const ingredient = myCart.find(elem => elem == myIngredient[0]);
+    if (!ingredient) {
+      myCart.push(...myIngredient);
+    }
     myCart.map((elem, i) => {
-      console.log(elem.name)
-      if (myCart[elem.name]) { return myCart.splice(i, 1) }
-  })
+      console.log(elem.name);
+      if (myCart[elem.name]) {
+        return myCart.splice(i, 1);
+      }
+    });
     this.setState({
       ...this.state,
       cart: myCart
@@ -49,9 +56,7 @@ class App extends Component {
 
   searchHandler = e => {
     const myRegex = new RegExp(e.target.value, "gi");
-    const filteredFood = [...this.state.foods].filter(({ name }) =>
-      name.match(myRegex)
-    );
+    const filteredFood = [...foods].filter(({ name }) => name.match(myRegex));
     this.setState({
       ...this.state,
       foods: filteredFood
